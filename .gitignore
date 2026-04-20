@@ -1,0 +1,10 @@
+# IDE
+
+/.idea
+/*.iml
+
+# Build
+
+/.gradle
+/.kotlin
+/build
