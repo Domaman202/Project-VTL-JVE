@@ -2,8 +2,7 @@ package ru.pht.vtl.ru.pht.vtl.compile.node
 
 class MathExpr(
     val operation: Operation,
-    val first: Expression,
-    val second: Expression
+    val operands: List<Expression>
 ) : Expression() {
     enum class Operation {
         // Базовая математика

@@ -1,6 +1,24 @@
 package ru.pht.vtl.ru.pht.vtl.runtime.api
 
+import ru.pht.vtl.ru.pht.vtl.runtime.exception.VTLRuntimeException
+
+
+/**
+ * Утилиты для работы с потоками с привязкой к контексту.
+ */
 object ContextThread {
+    private val CONTEXT = ScopedValue.newInstance<Context>()
+
+    /**
+     * Создание нового потока с привязкой к контексту.
+     *
+     * @param context Контекст.
+     * @param name Имя потока.
+     * @param start Запуск.
+     * @param isDaemon Демонический поток?
+     * @param isVirtual Виртуальный поток?
+     * @param block Вызываемый в новом потоке код.
+     */
     fun new(
         context: Context,
         name: String,
@@ -18,14 +36,24 @@ object ContextThread {
         return thread
     }
 
-    @Throws(NoContextException::class)
+    /**
+     * Получение контекста потока.
+     *
+     * @return Контекст.
+     * @throws ThreadWithoutContextException Поток не привязан к контексту.
+     */
+    @JvmStatic
+    @Throws(ThreadWithoutContextException::class)
     fun context(): Context {
         try {
             return CONTEXT.get()
         } catch (_: NoSuchElementException) {
-            throw NoContextException()
+            throw ThreadWithoutContextException()
         }
     }
 
-    private val CONTEXT = ScopedValue.newInstance<Context>()
+    /**
+     * Ошибка получения контекста из потока.
+     */
+    class ThreadWithoutContextException : VTLRuntimeException()
 }

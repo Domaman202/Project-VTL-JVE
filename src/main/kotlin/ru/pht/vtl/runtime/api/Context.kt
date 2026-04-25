@@ -1,5 +1,6 @@
 package ru.pht.vtl.ru.pht.vtl.runtime.api
 
+import ru.pht.vtl.compile.api.annotation.utils.RefContext
 import ru.pht.vtl.ru.pht.vtl.runtime.exception.VTLSecurityException
 
 /**
@@ -80,13 +81,23 @@ open class Context {
     )
 
     /**
+     * Дочерние контексты.
+     */
+    class ContextKinds(
+        /**
+         * Разрешение определения дочерних контекстов.
+         */
+        val allow: Boolean,
+
+        /**
+         * Список дочерних возможных контекстов.
+         */
+        val list: Array<RefContext>
+    )
+
+
+    /**
      * Ошибка безопасности вызванная созданием контекста.
      */
-    open class ContextCreationException : VTLSecurityException {
-        constructor() : super()
-        constructor(message: String?) : super(message)
-        constructor(message: String?, cause: Throwable?) : super(message, cause)
-        constructor(cause: Throwable?) : super(cause)
-        protected constructor(message: String?, cause: Throwable?, enableSuppression: Boolean, writableStackTrace: Boolean) : super(message, cause, enableSuppression, writableStackTrace)
-    }
+    class ContextCreationException(message: String?) : VTLSecurityException(message)
 }
