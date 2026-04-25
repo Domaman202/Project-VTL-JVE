@@ -7,10 +7,13 @@ import java.nio.file.Path
 interface IModule {
     val name: String
     val version: Version
-    val dependencies: List<IModule>
-    val sources: List<ISource>
 
-    interface ISource {
+    val dependencies: List<IModule>
+
+    val sources: List<IFile>
+    val resources: List<IFile>
+
+    interface IFile {
         val path: Path
 
         fun openStream(): InputStream

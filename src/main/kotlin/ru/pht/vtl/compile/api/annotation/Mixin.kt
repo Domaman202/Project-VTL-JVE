@@ -33,8 +33,19 @@ annotation class Mixin(
         val parents: Array<RefClass>
     ) {
         enum class Mode {
+            /**
+             * Переопределение списка родителей.
+             */
             OVERWRITE,
+
+            /**
+             * Расширение списка родителей.
+             */
             EXPAND,
+
+            /**
+             * Удаление элементов из списка родителей.
+             */
             NARROW
         }
     }
@@ -63,8 +74,54 @@ annotation class Mixin(
         val type: RefClass = RefClass()
     ) {
         enum class Mode {
+            /**
+             * Определение нового поля.
+             */
             NEW,
+
+            /**
+             * Удаление старого поля.
+             */
             DELETE,
+
+            /**
+             * Переопределение поля.
+             */
+            OVERWRITE
+        }
+    }
+
+    /**
+     * Миксин конструктора.
+     */
+    annotation class Constructor(
+        /**
+         * Режим миксина.
+         */
+        val mode: Mode,
+
+        /**
+         * Типы аргументов метода VTL.
+         *
+         * По умолчанию: Используются преобразованные из JVM.
+         */
+        val argumentTypes: Array<RefClass> = [],
+
+    ) {
+        enum class Mode {
+            /**
+             * Определение нового конструктора.
+             */
+            NEW,
+
+            /**
+             * Удаление старого конструктора.
+             */
+            DELETE,
+
+            /**
+             * Переопределение конструктора.
+             */
             OVERWRITE
         }
     }
@@ -100,8 +157,19 @@ annotation class Mixin(
         val returnType: RefClass = RefClass()
     ) {
         enum class Mode {
+            /**
+             * Определение нового метода.
+             */
             NEW,
+
+            /**
+             * Удаление старого метода.
+             */
             DELETE,
+
+            /**
+             * Переопределение метода.
+             */
             OVERWRITE
         }
     }

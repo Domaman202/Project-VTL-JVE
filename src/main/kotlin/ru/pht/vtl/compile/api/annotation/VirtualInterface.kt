@@ -1,7 +1,7 @@
 package ru.pht.vtl.compile.api.annotation
 
-import ru.pht.vtl.compile.api.annotation.utils.RefClass
 import ru.pht.vtl.compile.api.annotation.utils.RefContext
+import ru.pht.vtl.ru.pht.vtl.compile.api.annotation.utils.Parents
 
 /**
  * Описание внешнего интерфейса VTL.
@@ -21,7 +21,7 @@ annotation class VirtualInterface(
      *
      * По умолчанию: Используются наследования из JVM.
      */
-    val parents: Array<RefClass> = [],
+    val parents: Parents = Parents(),
 
     /**
      * Привязка к контексту.

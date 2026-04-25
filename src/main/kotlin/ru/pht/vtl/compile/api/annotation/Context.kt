@@ -31,14 +31,14 @@ annotation class Context(
     /**
      * Видимость для других контекстов.
      *
-     * По умолчанию: Наследование от родителя (Глобальный).
+     * По умолчанию: Наследование от родителя.
      */
-    val visibleFor: Array<RefContext> = [RefContext("global")],
+    val visibleFor: Array<RefContext> = [],
 
     /**
      * Возможность примеси из других контестов.
      *
-     * По умолчанию: Наследование от родителя (Глобальный).
+     * По умолчанию: Наследование от родителя.
      */
-    val mixinsFor: Array<RefContext> = [RefContext("global")]
+    val mixinsFor: Array<RefContext> = []
 )
