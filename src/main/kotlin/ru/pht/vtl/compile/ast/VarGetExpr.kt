@@ -1,5 +1,5 @@
 package ru.pht.vtl.ru.pht.vtl.compile.node
 
-class VariableGetExpr(
+class VarGetExpr(
     val name: String
 ) : Expression()

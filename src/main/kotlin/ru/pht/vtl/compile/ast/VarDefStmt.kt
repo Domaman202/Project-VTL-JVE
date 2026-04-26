@@ -1,6 +1,6 @@
 package ru.pht.vtl.ru.pht.vtl.compile.node
 
-class VariableStmt(
+class VarDefStmt(
     val name: String,
     val type: String,
     val mutable: Boolean,

@@ -1,6 +1,6 @@
 package ru.pht.vtl.ru.pht.vtl.compile.node
 
-class VariableSetStmt(
+class VarSetStmt(
     val name: String,
     val value: Expression
 ) : Statement()

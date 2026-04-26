@@ -25,5 +25,6 @@ class MixinStmt(
         val name: String,
         val argumentTypes: List<String>,
         val returnType: String,
+        val body: List<Statement>
     ) : StmtMixinElement()
 }
