@@ -12,8 +12,14 @@ class MathExpr(
         DIV,
         MOD,
         // Продвинутая математика
+        NEG,
         POW,
         SQRT,
+        // Операции сравнения
+        GREAT,
+        GREAT_EQ,
+        LESS,
+        LESS_EQ,
         // Битовые операции
         BIT_AND,
         BIT_OR,
@@ -26,5 +32,6 @@ class MathExpr(
         AND,
         OR,
         XOR,
+        NOT
     }
 }

@@ -1,5 +1,6 @@
 package ru.pht.vtl.ru.pht.vtl.compile
 
+import ru.pht.vtl.ru.pht.vtl.compile.ast.BlockStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.CallExpr
 import ru.pht.vtl.ru.pht.vtl.compile.node.ClassStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.FieldGetExpr
@@ -91,6 +92,12 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+    override fun visit(node: BlockStmt) {
+        this.appendInstrStart("Block")
+        this.appendInstrArg("Body", node.body)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: ClassStmt) {
         this.appendInstrStart("Class")
         this.appendInstrArg("Name", node.name)
@@ -166,6 +173,13 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+    override fun visit(node: MixinStmt.MixinConstructorStmt) {
+        this.appendInstrStart("Mixin/Constructor")
+        this.appendInstrArg("ArgumentTypes", node.argumentTypes)
+        this.appendInstrArg("Body", node.body)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: MixinMethodStmt) {
         this.appendInstrStart("Mixin/Method")
         this.appendInstrArg("Mode", node.mode)
@@ -201,6 +215,7 @@ class NodePrinter private constructor() : INodeVisitor {
 
     override fun visit(node: WhileStmt) {
         this.appendInstrStart("While")
+        this.appendInstrArg("DoWhile", node.doWhile)
         this.appendInstrArg("Condition", node.condition)
         this.appendInstrArg("Then", node.thenNode)
         this.appendInstrEnd()
@@ -214,10 +229,25 @@ class NodePrinter private constructor() : INodeVisitor {
         this.indent--
     }
 
+    private fun appendStringIsolated(value: String) {
+        for (char in value) {
+            when (char) {
+                '\n' -> this.sb.append("\\n")
+                '\r' -> this.sb.append("\\r")
+                '\t' -> this.sb.append("\\t")
+                '\b' -> this.sb.append("\\b")
+                '\'' -> this.sb.append("\\'")
+                '\"' -> this.sb.append("\\\"")
+                '\\' -> this.sb.append("\\\\")
+                else -> this.sb.append(char)
+            }
+        }
+    }
+
     private fun appendIndent() {
         if (indent > 0) {
             this.sb
-                .append("\t".repeat(this.indent - 1))
+                .append("|\t".repeat(this.indent - 1))
                 .append("|")
                 .append("\t")
         }
@@ -230,39 +260,46 @@ class NodePrinter private constructor() : INodeVisitor {
     private fun appendInstrStart(name: String) {
         this.appendIndent()
         this.sb.append("[$name")
+        this.appendNewLine()
+        this.enter()
     }
 
     private fun appendInstrArg(name: String, value: Any?) {
-        this.appendNewLine()
         this.appendIndent()
-        this.sb.append("($name): $value")
+        this.sb.append("($name): ")
+        this.appendStringIsolated(value.toString())
+        this.appendNewLine()
     }
 
     private fun appendInstrArg(name: String, value: Node) {
-        this.appendNewLine()
         this.appendIndent()
         this.sb.append("($name):")
         this.enter()
+        this.appendNewLine()
         this.visit(value)
         this.exit()
+        this.appendIndent()
+        this.sb.append("-")
+        this.appendNewLine()
     }
 
     private fun appendInstrArg(name: String, value: Iterable<Node>) {
-        this.appendNewLine()
         this.appendIndent()
         this.sb.append("($name):")
+        this.appendNewLine()
         this.enter()
         val iterator = value.iterator()
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
             this.visit(iterator.next())
-            if (iterator.hasNext()) {
-                this.appendNewLine()
-            }
-        }
         this.exit()
+        this.appendIndent()
+        this.sb.append("-")
+        this.appendNewLine()
     }
 
     private fun appendInstrEnd() {
+        this.exit()
+        this.appendIndent()
         this.sb.append("]")
         this.appendNewLine()
     }
@@ -271,7 +308,7 @@ class NodePrinter private constructor() : INodeVisitor {
         fun print(node: Node): String {
             val printer = NodePrinter()
             printer.visit(node)
-            return printer.toString()
+            return printer.sb.substring(0, printer.sb.lastIndex)
         }
     }
 }

@@ -20,6 +20,12 @@ class MixinStmt(
         val type: String,
     ) : StmtMixinElement()
 
+    class MixinConstructorStmt(
+        val mode: Mixin.Constructor.Mode,
+        val argumentTypes: List<String>,
+        val body: List<Statement>
+    ) : StmtMixinElement()
+
     class MixinMethodStmt(
         val mode: Mixin.Method.Mode,
         val name: String,

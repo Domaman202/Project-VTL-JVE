@@ -1,5 +1,6 @@
 package ru.pht.vtl.ru.pht.vtl.compile.node.utils
 
+import ru.pht.vtl.ru.pht.vtl.compile.ast.BlockStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.CallExpr
 import ru.pht.vtl.ru.pht.vtl.compile.node.ClassStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.Expression
@@ -11,6 +12,7 @@ import ru.pht.vtl.ru.pht.vtl.compile.node.InterfaceStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.MathExpr
 import ru.pht.vtl.ru.pht.vtl.compile.node.MethodStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt
+import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinConstructorStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinFieldStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinMethodStmt
 import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinParentsStmt
@@ -27,8 +29,8 @@ import ru.pht.vtl.ru.pht.vtl.compile.node.WhileStmt
 interface INodeVisitor {
     fun visit(node: Node) {
         when (node) {
-            is Expression -> visit(node)
-            is Statement -> visit(node)
+            is Expression   -> visit(node)
+            is Statement    -> visit(node)
             else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
     }
@@ -40,7 +42,7 @@ interface INodeVisitor {
             is IfExpr           -> visit(node)
             is MathExpr         -> visit(node)
             is ValueExpr        -> visit(node)
-            is VarGetExpr  -> visit(node)
+            is VarGetExpr       -> visit(node)
             else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
     }
@@ -64,6 +66,7 @@ interface INodeVisitor {
 
     fun visit(node: Statement) {
         when (node) {
+            is BlockStmt        -> visit(node)
             is ClassStmt        -> visit(node)
             is FieldSetStmt     -> visit(node)
             is IfStmt           -> visit(node)
@@ -72,8 +75,8 @@ interface INodeVisitor {
             is MixinStmt        -> visit(node)
             is StmtMixinElement -> visit(node)
             is ReturnStmt       -> visit(node)
-            is VarSetStmt  -> visit(node)
-            is VarDefStmt     -> visit(node)
+            is VarSetStmt       -> visit(node)
+            is VarDefStmt       -> visit(node)
             is WhileStmt        -> visit(node)
             else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
@@ -89,9 +92,11 @@ interface INodeVisitor {
 
     fun visit(node: StmtMixinElement) {
         when (node) {
-            is MixinParentsStmt -> visit(node)
-            is MixinFieldStmt   -> visit(node)
-            is MixinMethodStmt  -> visit(node)
+            is MixinParentsStmt     -> visit(node)
+            is MixinFieldStmt       -> visit(node)
+            is MixinConstructorStmt -> visit(node)
+            is MixinMethodStmt      -> visit(node)
+            else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
     }
 
@@ -104,6 +109,7 @@ interface INodeVisitor {
     fun visit(node: MathExpr)
     fun visit(node: ValueExpr)
     fun visit(node: VarGetExpr)
+    fun visit(node: BlockStmt)
     fun visit(node: ClassStmt)
     fun visit(node: FieldSetStmt.Instance)
     fun visit(node: FieldSetStmt.Static)
@@ -113,6 +119,7 @@ interface INodeVisitor {
     fun visit(node: MixinStmt)
     fun visit(node: MixinParentsStmt)
     fun visit(node: MixinFieldStmt)
+    fun visit(node: MixinConstructorStmt)
     fun visit(node: MixinMethodStmt)
     fun visit(node: ReturnStmt)
     fun visit(node: VarSetStmt)
