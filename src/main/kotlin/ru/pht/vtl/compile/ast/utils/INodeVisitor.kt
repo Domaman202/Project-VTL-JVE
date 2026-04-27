@@ -29,7 +29,7 @@ interface INodeVisitor {
         when (node) {
             is BlockStmt        -> visit(node)
             is ClassStmt        -> visit(node)
-            is ContextStmt   -> visit(node)
+            is ContextStmt      -> visit(node)
             is FieldSetStmt     -> visit(node)
             is IfStmt           -> visit(node)
             is InterfaceStmt    -> visit(node)
