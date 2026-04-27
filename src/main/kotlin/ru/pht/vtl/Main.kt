@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl
+package ru.pht.vtl
 
 fun main() {
 

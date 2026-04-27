@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.compile.api.annotation
+package ru.pht.vtl.compile.api.annotation
 
 import kotlin.reflect.KClass
 

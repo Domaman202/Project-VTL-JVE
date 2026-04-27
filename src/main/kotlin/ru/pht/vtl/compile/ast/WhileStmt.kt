@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.compile.node
+package ru.pht.vtl.compile.ast
 
 class WhileStmt(
     val doWhile: Boolean,

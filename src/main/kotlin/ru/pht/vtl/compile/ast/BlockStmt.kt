@@ -1,6 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.compile.ast
-
-import ru.pht.vtl.ru.pht.vtl.compile.node.Statement
+package ru.pht.vtl.compile.ast
 
 class BlockStmt(
     val body: List<Statement>

@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.runtime.exception
+package ru.pht.vtl.runtime.exception
 
 /**
  * Ошибка безопасности runtime составляющей VTL.

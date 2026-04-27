@@ -1,6 +1,6 @@
-package ru.pht.vtl.ru.pht.vtl.runtime.api
+package ru.pht.vtl.runtime.api
 
-import ru.pht.vtl.ru.pht.vtl.runtime.exception.VTLRuntimeException
+import ru.pht.vtl.runtime.exception.VTLRuntimeException
 
 
 /**

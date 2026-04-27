@@ -1,31 +1,17 @@
-package ru.pht.vtl.ru.pht.vtl.compile
+package ru.pht.vtl.compile.ast.utils
 
-import ru.pht.vtl.ru.pht.vtl.compile.ast.BlockStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.CallExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.ClassStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.FieldGetExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.FieldSetStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.IfExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.IfStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.InterfaceStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MathExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.MethodStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinFieldStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinMethodStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinParentsStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.Node
-import ru.pht.vtl.ru.pht.vtl.compile.node.ReturnStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.ValueExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.VarGetExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.VarSetStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.VarDefStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.WhileStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.utils.INodeVisitor
+import ru.pht.vtl.compile.ast.*
+import ru.pht.vtl.compile.node.utils.INodeVisitor
 
 class NodePrinter private constructor() : INodeVisitor {
     private val sb = StringBuilder()
     private var indent = 0
+
+    override fun visit(node: BlockStmt) {
+        this.appendInstrStart("Block")
+        this.appendInstrArg("Body", node.body)
+        this.appendInstrEnd()
+    }
 
     override fun visit(node: CallExpr.Internal) {
         this.appendInstrStart("Call/Internal")
@@ -50,6 +36,39 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+    override fun visit(node: ClassStmt) {
+        this.appendInstrStart("Class")
+        this.appendInstrArg("Name", node.name)
+        this.appendInstrArg("Parents", node.parents)
+        this.appendInstrArg("Open", node.open)
+        this.appendInstrArg("Context", node.context)
+        this.appendInstrArg("Body", node.body)
+        this.appendInstrEnd()
+    }
+
+    override fun visit(node: ContextStmt) {
+        this.appendInstrStart("Context")
+        this.appendInstrArg("Name", node.name)
+        if (node.parent != null)
+            this.appendInstrArg("Parent", node.parent)
+        else this.appendInstrArg("Parent", "(None)")
+        if (node.allowKinds) {
+            this.appendInstrArg("AllowKinds", true)
+            this.appendInstrArg("Kinds", node.kinds)
+        } else this.appendInstrArg("AllowKinds", false)
+        this.appendInstrArg("VisibleFor", node.visibleFor)
+        this.appendInstrArg("MixinsFor", node.mixinsFor)
+        this.appendInstrEnd()
+    }
+
+    override fun visit(node: FieldDefStmt) {
+        this.appendInstrStart("FieldDef")
+        this.appendInstrArg("Name", node.name)
+        this.appendInstrArg("Type", node.type)
+        this.appendInstrArg("Mutable", node.mutable)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: FieldGetExpr.Instance) {
         this.appendInstrStart("FieldGet/Instance")
         this.appendInstrArg("Name", node.name)
@@ -61,50 +80,6 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrStart("FieldGet/Static")
         this.appendInstrArg("Name", node.name)
         this.appendInstrArg("Class", node.clazz)
-        this.appendInstrEnd()
-    }
-
-    override fun visit(node: IfExpr) {
-        this.appendInstrStart("If")
-        this.appendInstrArg("Condition", node.condition)
-        this.appendInstrArg("Then", node.thenNode)
-        this.appendInstrArg("Else", node.elseNode)
-        this.appendInstrEnd()
-    }
-
-    override fun visit(node: MathExpr) {
-        this.appendInstrStart("Math")
-        this.appendInstrArg("Operation", node.operation)
-        this.appendInstrArg("Operands", node.operands)
-        this.appendInstrEnd()
-    }
-
-    override fun visit(node: ValueExpr) {
-        this.appendInstrStart("Value")
-        this.appendInstrArg("Type", node.type)
-        this.appendInstrArg("Value", node.value)
-        this.appendInstrEnd()
-    }
-
-    override fun visit(node: VarGetExpr) {
-        this.appendInstrStart("VarGet")
-        this.appendInstrArg("Name", node.name)
-        this.appendInstrEnd()
-    }
-
-    override fun visit(node: BlockStmt) {
-        this.appendInstrStart("Block")
-        this.appendInstrArg("Body", node.body)
-        this.appendInstrEnd()
-    }
-
-    override fun visit(node: ClassStmt) {
-        this.appendInstrStart("Class")
-        this.appendInstrArg("Name", node.name)
-        this.appendInstrArg("Parents", node.parents)
-        this.appendInstrArg("Open", node.open)
-        this.appendInstrArg("Context", node.context)
-        this.appendInstrArg("Body", node.body)
         this.appendInstrEnd()
     }
 
@@ -121,6 +96,13 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrArg("Name", node.name)
         this.appendInstrArg("Class", node.clazz)
         this.appendInstrArg("Value", node.value)
+        this.appendInstrEnd()
+    }
+    override fun visit(node: IfExpr) {
+        this.appendInstrStart("If")
+        this.appendInstrArg("Condition", node.condition)
+        this.appendInstrArg("Then", node.thenNode)
+        this.appendInstrArg("Else", node.elseNode)
         this.appendInstrEnd()
     }
 
@@ -143,6 +125,14 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+    override fun visit(node: MathExpr) {
+        this.appendInstrStart("Math")
+        this.appendInstrArg("Operation", node.operation)
+        this.appendInstrArg("Operands", node.operands)
+        this.appendInstrEnd()
+    }
+
+
     override fun visit(node: MethodStmt) {
         this.appendInstrStart("Method")
         this.appendInstrArg("Arguments", node.arguments)
@@ -151,18 +141,10 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
-    override fun visit(node: MixinStmt) {
-        this.appendInstrStart("Mixin")
-        this.appendInstrArg("Name", node.name)
-        this.appendInstrArg("Target", node.target)
-        this.appendInstrArg("Mixins", node.mixins)
-        this.appendInstrEnd()
-    }
-
-    override fun visit(node: MixinParentsStmt) {
-        this.appendInstrStart("Mixin/Parents")
-        this.appendInstrArg("Mode", node.mode)
-        this.appendInstrArg("Value", node.parents)
+    override fun visit(node: MixinConstructorStmt) {
+        this.appendInstrStart("Mixin/Constructor")
+        this.appendInstrArg("ArgumentTypes", node.argumentTypes)
+        this.appendInstrArg("Body", node.body)
         this.appendInstrEnd()
     }
 
@@ -170,13 +152,6 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrStart("Mixin/Field")
         this.appendInstrArg("Mode", node.mode)
         this.appendInstrArg("Type", node.type)
-        this.appendInstrEnd()
-    }
-
-    override fun visit(node: MixinStmt.MixinConstructorStmt) {
-        this.appendInstrStart("Mixin/Constructor")
-        this.appendInstrArg("ArgumentTypes", node.argumentTypes)
-        this.appendInstrArg("Body", node.body)
         this.appendInstrEnd()
     }
 
@@ -189,6 +164,21 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+    override fun visit(node: MixinParentsStmt) {
+        this.appendInstrStart("Mixin/Parents")
+        this.appendInstrArg("Mode", node.mode)
+        this.appendInstrArg("Value", node.parents)
+        this.appendInstrEnd()
+    }
+
+    override fun visit(node: MixinStmt) {
+        this.appendInstrStart("Mixin")
+        this.appendInstrArg("Name", node.name)
+        this.appendInstrArg("Target", node.target)
+        this.appendInstrArg("Mixins", node.mixins)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: ReturnStmt) {
         this.appendInstrStart("Return")
         if (node.value != null)
@@ -197,9 +187,9 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
-    override fun visit(node: VarSetStmt) {
-        this.appendInstrStart("VarSet")
-        this.appendInstrArg("Name", node.name)
+    override fun visit(node: ValueExpr) {
+        this.appendInstrStart("Value")
+        this.appendInstrArg("Type", node.type)
         this.appendInstrArg("Value", node.value)
         this.appendInstrEnd()
     }
@@ -209,6 +199,19 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrArg("Name", node.name)
         this.appendInstrArg("Type", node.type)
         this.appendInstrArg("Mutable", node.mutable)
+        this.appendInstrArg("Value", node.value)
+        this.appendInstrEnd()
+    }
+
+    override fun visit(node: VarGetExpr) {
+        this.appendInstrStart("VarGet")
+        this.appendInstrArg("Name", node.name)
+        this.appendInstrEnd()
+    }
+
+    override fun visit(node: VarSetStmt) {
+        this.appendInstrStart("VarSet")
+        this.appendInstrArg("Name", node.name)
         this.appendInstrArg("Value", node.value)
         this.appendInstrEnd()
     }

@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.compile.exception
+package ru.pht.vtl.compile.exception
 
 /**
  * Исключение во время компиляции VTL.

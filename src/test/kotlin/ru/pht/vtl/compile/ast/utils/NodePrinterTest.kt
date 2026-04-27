@@ -1,31 +1,8 @@
-package ru.pht.vtl.ru.pht.vtl.compile
+package ru.pht.vtl.compile.ast.utils
 
 import org.junit.jupiter.api.assertThrows
-import ru.pht.vtl.ru.pht.vtl.compile.api.annotation.Mixin
-import ru.pht.vtl.ru.pht.vtl.compile.ast.BlockStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.CallExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.ClassStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.Expression
-import ru.pht.vtl.ru.pht.vtl.compile.node.FieldGetExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.FieldSetStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.IfExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.IfStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.InterfaceStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MathExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.MethodStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinConstructorStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinFieldStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinMethodStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt.MixinParentsStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.Node
-import ru.pht.vtl.ru.pht.vtl.compile.node.ReturnStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.Statement
-import ru.pht.vtl.ru.pht.vtl.compile.node.ValueExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.VarDefStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.VarGetExpr
-import ru.pht.vtl.ru.pht.vtl.compile.node.VarSetStmt
-import ru.pht.vtl.ru.pht.vtl.compile.node.WhileStmt
+import ru.pht.vtl.compile.api.annotation.Mixin
+import ru.pht.vtl.compile.ast.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -34,6 +11,8 @@ class NodePrinterTest {
     fun testUnknownNodeType() {
         assertThrows<IllegalArgumentException> { NodePrinter.print(Node()) }
         assertThrows<IllegalArgumentException> { NodePrinter.print(Statement()) }
+        assertThrows<IllegalArgumentException> { NodePrinter.print(StatementClass()) }
+        assertThrows<IllegalArgumentException> { NodePrinter.print(StatementMixin()) }
         assertThrows<IllegalArgumentException> { NodePrinter.print(Expression()) }
     }
 
@@ -247,6 +226,26 @@ class NodePrinterTest {
                             ),
                         ),
                     )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testFieldDefStmt() {
+        assertEquals(
+            """
+                [FieldDef
+                |	(Name): i
+                |	(Type): vtl/core/Int
+                |	(Mutable): true
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                FieldDefStmt(
+                    "i",
+                    "vtl/core/Int",
+                    true
                 )
             )
         )

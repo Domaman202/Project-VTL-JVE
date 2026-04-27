@@ -1,7 +1,7 @@
-package ru.pht.vtl.ru.pht.vtl.runtime.api
+package ru.pht.vtl.runtime.api
 
 import ru.pht.vtl.compile.api.annotation.utils.RefContext
-import ru.pht.vtl.ru.pht.vtl.runtime.exception.VTLSecurityException
+import ru.pht.vtl.runtime.exception.VTLSecurityException
 
 /**
  * Runtime контекст VTL.

@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.runtime.translator
+package ru.pht.vtl.runtime.translator
 
 import io.github.z4kn4fein.semver.Version
 import java.io.InputStream

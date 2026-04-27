@@ -2,7 +2,7 @@ package ru.pht.vtl.ru.vtl.api
 
 import ru.pht.vtl.compile.api.annotation.VirtualClass
 import ru.pht.vtl.compile.api.annotation.utils.RefContext
-import ru.pht.vtl.ru.pht.vtl.compile.api.annotation.Constructor
+import ru.pht.vtl.compile.api.annotation.Constructor
 
 /**
  * Исключение VLT.

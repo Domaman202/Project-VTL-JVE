@@ -1,6 +1,6 @@
-package ru.pht.vtl.ru.pht.vtl.runtime.api
+package ru.pht.vtl.runtime.api
 
-import ru.pht.vtl.ru.pht.vtl.compile.node.MixinStmt
+import ru.pht.vtl.compile.ast.StatementMixin
 import java.net.URL
 import java.net.URLClassLoader
 
@@ -8,7 +8,7 @@ open class ContextClassLoader(urls: Array<URL>, parent: ClassLoader?) : URLClass
     /**
      * Список не применённых миксинов.
      */
-    val mixins: MutableMap<String, MutableList<MixinStmt>> = HashMap()
+    val mixins: MutableMap<String, MutableList<StatementMixin>> = HashMap()
 
     override fun loadClass(name: String?, resolve: Boolean): Class<*>? {
         // Поиск уже загруженного

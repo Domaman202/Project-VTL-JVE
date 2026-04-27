@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.compile.node
+package ru.pht.vtl.compile.ast
 
 class MethodStmt(
     val name: String,
@@ -6,4 +6,4 @@ class MethodStmt(
     val arguments: List<Pair<String, String>>,
     val returnType: String,
     val body: List<Statement>
-) : Statement()
+) : StatementClass()

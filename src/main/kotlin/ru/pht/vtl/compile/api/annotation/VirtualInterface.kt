@@ -1,7 +1,7 @@
 package ru.pht.vtl.compile.api.annotation
 
 import ru.pht.vtl.compile.api.annotation.utils.RefContext
-import ru.pht.vtl.ru.pht.vtl.compile.api.annotation.utils.Parents
+import ru.pht.vtl.compile.api.annotation.utils.Parents
 
 /**
  * Описание внешнего интерфейса VTL.

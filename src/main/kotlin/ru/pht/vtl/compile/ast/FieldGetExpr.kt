@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.compile.node
+package ru.pht.vtl.compile.ast
 
 open class FieldGetExpr(
     val name: String

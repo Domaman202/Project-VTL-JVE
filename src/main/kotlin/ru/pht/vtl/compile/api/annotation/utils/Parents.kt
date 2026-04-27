@@ -1,4 +1,4 @@
-package ru.pht.vtl.ru.pht.vtl.compile.api.annotation.utils
+package ru.pht.vtl.compile.api.annotation.utils
 
 import ru.pht.vtl.compile.api.annotation.utils.RefClass
 
