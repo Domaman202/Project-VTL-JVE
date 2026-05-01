@@ -46,16 +46,6 @@ object ContextThread {
     }
 
     /**
-     * Выполнение кода с новым контекстом безопасности.
-     *
-     * @param context Контекст безопасности.
-     * @param block Код.
-     */
-    fun executeWithNewSecure(context: SecureContext, block: Runnable) {
-        ScopedValue.runWhere(SECURE_CONTEXT, context, block)
-    }
-
-    /**
      * Получение текущего контекста загрузки потока.
      *
      * @return Контекст.
