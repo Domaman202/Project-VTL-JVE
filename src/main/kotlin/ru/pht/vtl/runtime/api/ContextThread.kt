@@ -4,15 +4,17 @@ import ru.pht.vtl.runtime.exception.VTLRuntimeException
 
 
 /**
- * Утилиты для работы с потоками с привязкой к контексту.
+ * Утилиты для работы с потоками с привязкой к контекстам.
  */
 object ContextThread {
-    private val CONTEXT = ScopedValue.newInstance<Context>()
+    private val SECURE_CONTEXT = ScopedValue.newInstance<SecureContext>()
+    private val CLASSLOADING_CONTEXT = ScopedValue.newInstance<ClassLoadingContext>()
 
     /**
-     * Создание нового потока с привязкой к контексту.
+     * Создание нового потока с привязкой к контекстам.
      *
-     * @param context Контекст.
+     * @param secureContext Контекст безопасности.
+     * @param classLoadingContext Контекст загрузки классов.
      * @param name Имя потока.
      * @param start Запуск.
      * @param isDaemon Демонический поток?
@@ -20,7 +22,8 @@ object ContextThread {
      * @param block Вызываемый в новом потоке код.
      */
     fun new(
-        context: Context,
+        secureContext: SecureContext,
+        classLoadingContext: ClassLoadingContext,
         name: String,
         start: Boolean = true,
         isDaemon: Boolean = false,
@@ -28,8 +31,14 @@ object ContextThread {
         block: () -> Unit
     ): Thread {
         val builder = if (isVirtual) Thread.ofVirtual() else Thread.ofPlatform()
-        val thread = builder.unstarted { ScopedValue.runWhere(CONTEXT, context) { block() } }
-        thread.contextClassLoader = context.classLoader
+        val thread = builder.unstarted {
+            ScopedValue.runWhere(SECURE_CONTEXT, secureContext) {
+                ScopedValue.runWhere(CLASSLOADING_CONTEXT, classLoadingContext) {
+                    block()
+                }
+            }
+        }
+        thread.contextClassLoader = classLoadingContext.classLoader
         thread.name = name
         thread.isDaemon = isDaemon
         if (start) thread.start()
@@ -37,16 +46,42 @@ object ContextThread {
     }
 
     /**
-     * Получение контекста потока.
+     * Выполнение кода с новым контекстом безопасности.
+     *
+     * @param context Контекст безопасности.
+     * @param block Код.
+     */
+    fun executeWithNewSecure(context: SecureContext, block: Runnable) {
+        ScopedValue.runWhere(SECURE_CONTEXT, context, block)
+    }
+
+    /**
+     * Получение текущего контекста загрузки потока.
      *
      * @return Контекст.
      * @throws ThreadWithoutContextException Поток не привязан к контексту.
      */
     @JvmStatic
     @Throws(ThreadWithoutContextException::class)
-    fun currentContext(): Context {
+    fun currentClassLoadingContext(): ClassLoadingContext {
         try {
-            return CONTEXT.get()
+            return CLASSLOADING_CONTEXT.get()
+        } catch (_: NoSuchElementException) {
+            throw ThreadWithoutContextException()
+        }
+    }
+
+    /**
+     * Получение текущего контекста безопасности потока.
+     *
+     * @return Контекст.
+     * @throws ThreadWithoutContextException Поток не привязан к контексту.
+     */
+    @JvmStatic
+    @Throws(ThreadWithoutContextException::class)
+    fun currentSecureContext(): SecureContext {
+        try {
+            return SECURE_CONTEXT.get()
         } catch (_: NoSuchElementException) {
             throw ThreadWithoutContextException()
         }

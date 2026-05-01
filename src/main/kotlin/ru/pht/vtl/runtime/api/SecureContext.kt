@@ -4,9 +4,9 @@ import ru.pht.vtl.compile.api.annotation.utils.RefContext
 import ru.pht.vtl.runtime.exception.VTLSecurityException
 
 /**
- * Runtime контекст VTL.
+ * Runtime контекст безопасности VTL.
  */
-open class Context {
+open class SecureContext {
     /**
      * Техническое имя контекста.
      */
@@ -22,7 +22,7 @@ open class Context {
     /**
      * Родительский контекст.
      */
-    val parent: Context?
+    val parent: SecureContext?
 
     /**
      * Дочерние контексты.
@@ -39,11 +39,6 @@ open class Context {
      */
     val mixinsFor: Array<String>?
 
-    /**
-     * Загрузчик классов.
-     */
-    val classLoader: ContextClassLoader
-
 
     /**
      * Конструктор контекста.
@@ -55,14 +50,13 @@ open class Context {
      * @param visibleFor Видимость для других контекстов.
      * @param mixinsFor Возможность примеси из других контекстов.
      */
-    protected constructor(name: String, displayedName: String?, parent: Context?, kinds: ContextKinds, visibleFor: Array<String>?, mixinsFor: Array<String>?) {
+    protected constructor(name: String, displayedName: String?, parent: SecureContext?, kinds: ContextKinds, visibleFor: Array<String>?, mixinsFor: Array<String>?) {
         this.name = name
         this.displayedName = displayedName ?: this.name
         this.parent = parent
         this.kinds = kinds
         this.visibleFor = visibleFor ?: parent?.visibleFor
         this.mixinsFor = mixinsFor ?: parent?.mixinsFor
-        this.classLoader = ContextClassLoader(emptyArray(), parent?.classLoader)
     }
 
     /**
@@ -79,12 +73,12 @@ open class Context {
      * @throws ContextCreationException Если родительский контекст не может иметь дочерних контекстов или дочернего контекста с таким именем.
      */
     @Throws(ContextCreationException::class)
-    fun of(module: String, name: String, displayedName: String?, parent: Context, kinds: ContextKinds, visibleFor: Array<String>?, mixinsFor: Array<String>?): Context {
+    fun of(module: String, name: String, displayedName: String?, parent: SecureContext, kinds: ContextKinds, visibleFor: Array<String>?, mixinsFor: Array<String>?): SecureContext {
         if (!name.startsWith(module))
             throw ContextCreationException("Определение контекста \"$name\" (\"${displayedName ?: name}\") небезопасно для модуля \"$module\"")
         if (!parent.kinds.allow || (parent.kinds.list.isNotEmpty() && parent.kinds.list.none { it.name == name }))
             throw ContextCreationException("Контекст \"$name\" не может быть дочерним для контекста \"${parent.name}\"")
-        return Context(name, displayedName, parent, kinds, visibleFor, mixinsFor)
+        return SecureContext(name, displayedName, parent, kinds, visibleFor, mixinsFor)
     }
 
     /**
@@ -93,7 +87,7 @@ open class Context {
      * @param from Контекст желающий применить миксины.
      * @return `true` - если применение разрешено, `false` - иначе.
      */
-    fun checkMixinAllow(from: Context): Boolean {
+    fun checkMixinAllow(from: SecureContext): Boolean {
         if (this == from)
             return true
         if (this.mixinsFor == null || this.mixinsFor.contains(from.name))
@@ -104,9 +98,9 @@ open class Context {
     }
 
     /**
-     * Глобальный контекст.
+     * Глобальный контекст безопасности.
      */
-    object GlobalContext : Context(
+    object GlobalSecureContext : SecureContext(
         "global",
         null,
         null,
