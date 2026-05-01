@@ -1,5 +1,7 @@
 package ru.pht.vtl.runtime.api
 
+import ru.pht.vtl.compile.ast.StatementMixin
+
 /**
  * Runtime контекст загрузки классов VTL.
  */
@@ -13,6 +15,17 @@ open class ClassLoadingContext {
      * Родительский контекст.
      */
     val parent: ClassLoadingContext?
+
+
+    /**
+     * Список не применённых примесей.
+     */
+    val mixins: MutableMap<String, MutableList<Pair<SecureContext, StatementMixin>>>
+
+    /**
+     * Список применённых примесей.
+     */
+    val appliedMixins: MutableMap<Class<*>, List<StatementMixin>>
 
     /**
      * Загрузчик классов.
@@ -28,6 +41,8 @@ open class ClassLoadingContext {
     constructor(name: String, parent: ClassLoadingContext?) {
         this.name = name
         this.parent = parent
+        this.mixins = HashMap()
+        this.appliedMixins = HashMap()
         this.classLoader = ContextClassLoader(this, emptyArray(), null)
     }
 
@@ -41,6 +56,8 @@ open class ClassLoadingContext {
     protected constructor(name: String, parent: ClassLoadingContext?, parentClassLoader: ClassLoader) {
         this.name = name
         this.parent = parent
+        this.mixins = HashMap()
+        this.appliedMixins = HashMap()
         this.classLoader = ContextClassLoader(this, emptyArray(), parentClassLoader)
     }
 
