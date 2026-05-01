@@ -44,7 +44,7 @@ object ContextThread {
      */
     @JvmStatic
     @Throws(ThreadWithoutContextException::class)
-    fun context(): Context {
+    fun currentContext(): Context {
         try {
             return CONTEXT.get()
         } catch (_: NoSuchElementException) {

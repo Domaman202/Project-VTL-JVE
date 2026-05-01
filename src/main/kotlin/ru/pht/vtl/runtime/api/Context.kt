@@ -30,6 +30,16 @@ open class Context {
     val kinds: ContextKinds
 
     /**
+     * Видимость для других контекстов.
+     */
+    val visibleFor: Array<String>?
+
+    /**
+     * Возможность примеси из других контекстов.
+     */
+    val mixinsFor: Array<String>?
+
+    /**
      * Загрузчик классов.
      */
     val classLoader: ContextClassLoader
@@ -41,12 +51,17 @@ open class Context {
      * @param name Имя контекста.
      * @param displayedName Отображаемое имя контекста.
      * @param parent Родительский контекст.
+     * @param kinds Дочерние контексты.
+     * @param visibleFor Видимость для других контекстов.
+     * @param mixinsFor Возможность примеси из других контекстов.
      */
-    protected constructor(name: String, displayedName: String?, parent: Context?, kinds: ContextKinds) {
+    protected constructor(name: String, displayedName: String?, parent: Context?, kinds: ContextKinds, visibleFor: Array<String>?, mixinsFor: Array<String>?) {
         this.name = name
         this.displayedName = displayedName ?: this.name
         this.parent = parent
         this.kinds = kinds
+        this.visibleFor = visibleFor ?: parent?.visibleFor
+        this.mixinsFor = mixinsFor ?: parent?.mixinsFor
         this.classLoader = ContextClassLoader(emptyArray(), parent?.classLoader)
     }
 
@@ -57,17 +72,35 @@ open class Context {
      * @param name Имя контекста.
      * @param displayedName Отображаемое имя контекста.
      * @param parent Родительский контекст.
+     * @param visibleFor Видимость для других контекстов.
+     * @param mixinsFor Возможность примеси из других контекстов.
      * @return Новый контекст.
      * @throws ContextCreationException Если имя контекста не начинается с имени модуля.
      * @throws ContextCreationException Если родительский контекст не может иметь дочерних контекстов или дочернего контекста с таким именем.
      */
     @Throws(ContextCreationException::class)
-    fun of(module: String, name: String, displayedName: String?, parent: Context, kinds: ContextKinds): Context {
+    fun of(module: String, name: String, displayedName: String?, parent: Context, kinds: ContextKinds, visibleFor: Array<String>?, mixinsFor: Array<String>?): Context {
         if (!name.startsWith(module))
-            throw ContextCreationException("Определение контекста \"${name}\" (\"${displayedName ?: name}\") небезопасно для модуля \"${module}\"")
+            throw ContextCreationException("Определение контекста \"$name\" (\"${displayedName ?: name}\") небезопасно для модуля \"$module\"")
         if (!parent.kinds.allow || (parent.kinds.list.isNotEmpty() && parent.kinds.list.none { it.name == name }))
-            throw ContextCreationException("Контекст \"${name}\" не может быть дочерним для контекста \"${parent.name}\"")
-        return Context(name, displayedName, parent, kinds)
+            throw ContextCreationException("Контекст \"$name\" не может быть дочерним для контекста \"${parent.name}\"")
+        return Context(name, displayedName, parent, kinds, visibleFor, mixinsFor)
+    }
+
+    /**
+     * Проверка возможности применения миксинов из контекста.
+     *
+     * @param from Контекст желающий применить миксины.
+     * @return `true` - если применение разрешено, `false` - иначе.
+     */
+    fun checkMixinAllow(from: Context): Boolean {
+        if (this == from)
+            return true
+        if (this.mixinsFor == null || this.mixinsFor.contains(from.name))
+            return true
+        if (this.parent?.let(this::checkMixinAllow) == true)
+            return true
+        return false
     }
 
     /**
@@ -77,7 +110,9 @@ open class Context {
         "global",
         null,
         null,
-        ContextKinds(true, emptyArray())
+        ContextKinds(true, emptyArray()),
+        null,
+        null
     )
 
     /**
