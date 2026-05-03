@@ -84,15 +84,27 @@ open class SecureContext {
     /**
      * Проверка возможности применения миксинов из контекста.
      *
-     * @param from Контекст желающий применить миксины.
+     * @param context Контекст желающий применить миксины.
      * @return `true` - если применение разрешено, `false` - иначе.
      */
-    fun checkMixinAllow(from: SecureContext): Boolean {
-        if (this == from)
+    fun checkMixinAllow(context: SecureContext): Boolean {
+        if (this == context)
             return true
-        if (this.mixinsFor == null || this.mixinsFor.contains(from.name))
+        if (this.mixinsFor == null || this.mixinsFor.contains(context.name))
             return true
-        if (this.parent?.let(this::checkMixinAllow) == true)
+        return false
+    }
+
+    /**
+     * Проверка доступа из контекста.
+     *
+     * @param context Контекст желающий осуществить доступ.
+     * @return `true` - доступ разрешён, `false` - иначе.
+     */
+    fun checkAccessAllow(context: SecureContext): Boolean {
+        if (this == context)
+            return true
+        if (this.visibleFor == null || this.visibleFor.contains(context.name))
             return true
         return false
     }

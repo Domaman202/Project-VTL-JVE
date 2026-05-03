@@ -969,13 +969,13 @@ class NodePrinterTest {
             """
                 [Value
                 |	(Type): TYPE
-                |	(Value): ru.DmN.Test
+                |	(Value): ru/DmN/Test
                 ]
             """.trimIndent(),
             NodePrinter.print(
                 ValueExpr(
                     ValueExpr.Type.TYPE,
-                    "ru.DmN.Test"
+                    "ru/DmN/Test"
                 )
             )
         )

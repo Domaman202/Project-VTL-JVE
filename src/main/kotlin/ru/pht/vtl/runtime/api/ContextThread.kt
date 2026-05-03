@@ -38,7 +38,7 @@ object ContextThread {
                 }
             }
         }
-        thread.contextClassLoader = classLoadingContext.classLoader
+        thread.contextClassLoader = classLoadingContext.loader.asClassLoader
         thread.name = name
         thread.isDaemon = isDaemon
         if (start) thread.start()
