@@ -15,4 +15,10 @@ open class FieldSetStmt(
         value: Expression,
         val clazz: String
     ) : FieldSetStmt(name, value)
+
+    class Dynamic(
+        name: String,
+        value: Expression,
+        val instance: Expression
+    ) : FieldSetStmt(name, value)
 }

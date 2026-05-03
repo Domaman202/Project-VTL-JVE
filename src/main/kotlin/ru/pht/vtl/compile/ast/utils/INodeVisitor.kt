@@ -66,6 +66,7 @@ interface INodeVisitor {
             is CallExpr.Virtual     -> visit(node)
             is CallExpr.Super       -> visit(node)
             is CallExpr.Static      -> visit(node)
+            is CallExpr.Dynamic     -> visit(node)
             else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
     }
@@ -74,6 +75,7 @@ interface INodeVisitor {
         when (node) {
             is FieldGetExpr.Instance    -> visit(node)
             is FieldGetExpr.Static      -> visit(node)
+            is FieldGetExpr.Dynamic     -> visit(node)
             else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
     }
@@ -82,6 +84,7 @@ interface INodeVisitor {
         when (node) {
             is FieldSetStmt.Instance    -> visit(node)
             is FieldSetStmt.Static      -> visit(node)
+            is FieldSetStmt.Dynamic     -> visit(node)
             else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
     }
@@ -93,11 +96,14 @@ interface INodeVisitor {
     fun visit(node: CallExpr.Virtual)
     fun visit(node: CallExpr.Super)
     fun visit(node: CallExpr.Static)
+    fun visit(node: CallExpr.Dynamic)
     fun visit(node: FieldDefStmt)
     fun visit(node: FieldGetExpr.Instance)
     fun visit(node: FieldGetExpr.Static)
+    fun visit(node: FieldGetExpr.Dynamic)
     fun visit(node: FieldSetStmt.Instance)
     fun visit(node: FieldSetStmt.Static)
+    fun visit(node: FieldSetStmt.Dynamic)
     fun visit(node: IfExpr)
     fun visit(node: IfStmt)
     fun visit(node: InterfaceStmt)

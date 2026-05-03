@@ -44,6 +44,15 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+
+    override fun visit(node: CallExpr.Dynamic) {
+        this.appendInstrStart("Call/Dynamic")
+        this.appendInstrArg("Name", node.name)
+        this.appendInstrArg("Instance", node.instance)
+        this.appendInstrArg("Arguments", node.arguments)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: ClassStmt) {
         this.appendInstrStart("Class")
         this.appendInstrArg("Name", node.name)
@@ -91,6 +100,13 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+    override fun visit(node: FieldGetExpr.Dynamic) {
+        this.appendInstrStart("FieldGet/Dynamic")
+        this.appendInstrArg("Name", node.name)
+        this.appendInstrArg("Instance", node.instance)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: FieldSetStmt.Instance) {
         this.appendInstrStart("FieldSet/Instance")
         this.appendInstrArg("Name", node.name)
@@ -106,6 +122,15 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrArg("Value", node.value)
         this.appendInstrEnd()
     }
+
+    override fun visit(node: FieldSetStmt.Dynamic) {
+        this.appendInstrStart("FieldSet/Dynamic")
+        this.appendInstrArg("Name", node.name)
+        this.appendInstrArg("Instance", node.instance)
+        this.appendInstrArg("Value", node.value)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: IfExpr) {
         this.appendInstrStart("If")
         this.appendInstrArg("Condition", node.condition)

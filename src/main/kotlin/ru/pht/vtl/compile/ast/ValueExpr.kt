@@ -11,6 +11,7 @@ class ValueExpr(
         LONG,
         FLOAT,
         DOUBLE,
-        STRING
+        STRING,
+        TYPE
     }
 }

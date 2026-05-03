@@ -166,7 +166,7 @@ class NodePrinterTest {
     }
 
     @Test
-    fun testCallSuper() {
+    fun testCallSuperExpr() {
         assertEquals(
             """
                 [Call/Super
@@ -187,7 +187,7 @@ class NodePrinterTest {
     }
 
     @Test
-    fun testCallStatic() {
+    fun testCallStaticExpr() {
         assertEquals(
             """
                 [Call/Static
@@ -202,6 +202,58 @@ class NodePrinterTest {
                     "foo",
                     listOf(),
                     "ru/DmN/Foo"
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testCallDynamicExpr() {
+        assertEquals(
+            """
+                [Call/Dynamic
+                |	(Name): bar
+                |	(Instance):
+                |	|	[VarGet
+                |	|	|	(Name): o
+                |	|	]
+                |	-
+                |	(Arguments):
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                CallExpr.Dynamic(
+                    "bar",
+                    listOf(),
+                    VarGetExpr(
+                        "o"
+                    )
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Call/Dynamic
+                |	(Name): bar
+                |	(Instance):
+                |	|	[Value
+                |	|	|	(Type): TYPE
+                |	|	|	(Value): ru/DmN/Bar
+                |	|	]
+                |	-
+                |	(Arguments):
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                CallExpr.Dynamic(
+                    "bar",
+                    listOf(),
+                    ValueExpr(
+                        ValueExpr.Type.TYPE,
+                        "ru/DmN/Bar"
+                    )
                 )
             )
         )
@@ -315,6 +367,52 @@ class NodePrinterTest {
     }
 
     @Test
+    fun testFieldGetDynamicExpr() {
+        assertEquals(
+            """
+                [FieldGet/Dynamic
+                |	(Name): k
+                |	(Instance):
+                |	|	[VarGet
+                |	|	|	(Name): o
+                |	|	]
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                FieldGetExpr.Dynamic(
+                    "k",
+                    VarGetExpr(
+                        "o"
+                    )
+                )
+            )
+        )
+        assertEquals(
+            """
+                [FieldGet/Dynamic
+                |	(Name): k
+                |	(Instance):
+                |	|	[Value
+                |	|	|	(Type): TYPE
+                |	|	|	(Value): ru/DmN/Test
+                |	|	]
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                FieldGetExpr.Dynamic(
+                    "k",
+                    ValueExpr(
+                        ValueExpr.Type.TYPE,
+                        "ru/DmN/Test"
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun testFieldSetInstanceStmt() {
         assertEquals(
             """
@@ -371,6 +469,72 @@ class NodePrinterTest {
                         555,
                     ),
                     "ru/DmN/Test"
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testFieldSetDynamicStmt() {
+        assertEquals(
+            """
+                [FieldSet/Dynamic
+                |	(Name): k
+                |	(Instance):
+                |	|	[VarGet
+                |	|	|	(Name): o
+                |	|	]
+                |	-
+                |	(Value):
+                |	|	[Value
+                |	|	|	(Type): INT
+                |	|	|	(Value): 999
+                |	|	]
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                FieldSetStmt.Dynamic(
+                    "k",
+                    ValueExpr(
+                        ValueExpr.Type.INT,
+                        999,
+                    ),
+                    VarGetExpr(
+                        "o"
+                    )
+                )
+            )
+        )
+        assertEquals(
+            """
+                [FieldSet/Dynamic
+                |	(Name): k
+                |	(Instance):
+                |	|	[Value
+                |	|	|	(Type): TYPE
+                |	|	|	(Value): ru/DmN/Test
+                |	|	]
+                |	-
+                |	(Value):
+                |	|	[Value
+                |	|	|	(Type): INT
+                |	|	|	(Value): 999
+                |	|	]
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                FieldSetStmt.Dynamic(
+                    "k",
+                    ValueExpr(
+                        ValueExpr.Type.INT,
+                        999,
+                    ),
+                    ValueExpr(
+                        ValueExpr.Type.TYPE,
+                        "ru/DmN/Test"
+                    )
                 )
             )
         )
@@ -706,6 +870,90 @@ class NodePrinterTest {
         assertEquals(
             """
                 [Value
+                |	(Type): NULL
+                |	(Value): null
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                ValueExpr(
+                    ValueExpr.Type.NULL,
+                    null
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Value
+                |	(Type): BOOL
+                |	(Value): true
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                ValueExpr(
+                    ValueExpr.Type.BOOL,
+                    true
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Value
+                |	(Type): INT
+                |	(Value): 12
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                ValueExpr(
+                    ValueExpr.Type.INT,
+                    12
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Value
+                |	(Type): LONG
+                |	(Value): 12000000000
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                ValueExpr(
+                    ValueExpr.Type.LONG,
+                    12000000000
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Value
+                |	(Type): FLOAT
+                |	(Value): 21.33
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                ValueExpr(
+                    ValueExpr.Type.FLOAT,
+                    21.33f
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Value
+                |	(Type): DOUBLE
+                |	(Value): 21.00000033
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                ValueExpr(
+                    ValueExpr.Type.DOUBLE,
+                    21.00000033
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Value
                 |	(Type): STRING
                 |	(Value): Hello,\n\tWorld!
                 ]
@@ -714,6 +962,20 @@ class NodePrinterTest {
                 ValueExpr(
                     ValueExpr.Type.STRING,
                     "Hello,\n\tWorld!"
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Value
+                |	(Type): TYPE
+                |	(Value): ru.DmN.Test
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                ValueExpr(
+                    ValueExpr.Type.TYPE,
+                    "ru.DmN.Test"
                 )
             )
         )

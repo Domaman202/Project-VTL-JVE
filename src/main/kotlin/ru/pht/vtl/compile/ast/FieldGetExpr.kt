@@ -12,4 +12,9 @@ open class FieldGetExpr(
         name: String,
         val clazz: String
     ) : FieldGetExpr(name)
+
+    class Dynamic(
+        name: String,
+        val instance: Expression
+    ) : FieldGetExpr(name)
 }

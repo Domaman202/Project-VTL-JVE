@@ -26,4 +26,10 @@ open class CallExpr(
         arguments: List<Expression>,
         val clazz: String
     ) : CallExpr(name, arguments)
+
+    class Dynamic(
+        name: String,
+        arguments: List<Expression>,
+        val instance: Expression
+    ) : CallExpr(name, arguments)
 }
