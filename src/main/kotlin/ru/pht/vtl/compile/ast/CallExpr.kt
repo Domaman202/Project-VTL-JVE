@@ -15,6 +15,12 @@ open class CallExpr(
         val instance: Expression
     ) : CallExpr(name, arguments)
 
+    class Super(
+        name: String,
+        arguments: List<Expression>,
+        val clazz: String
+    ) : CallExpr(name, arguments)
+
     class Static(
         name: String,
         arguments: List<Expression>,

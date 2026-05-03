@@ -166,10 +166,31 @@ class NodePrinterTest {
     }
 
     @Test
+    fun testCallSuper() {
+        assertEquals(
+            """
+                [Call/Super
+                |	(Name): toString
+                |	(Class): vtl/core/Object
+                |	(Arguments):
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                CallExpr.Super(
+                    "toString",
+                    listOf(),
+                    "vtl/core/Object"
+                )
+            )
+        )
+    }
+
+    @Test
     fun testCallStatic() {
         assertEquals(
             """
-                [Call/Virtual
+                [Call/Static
                 |	(Name): foo
                 |	(Class): ru/DmN/Foo
                 |	(Arguments):

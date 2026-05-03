@@ -28,8 +28,16 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+    override fun visit(node: CallExpr.Super) {
+        this.appendInstrStart("Call/Super")
+        this.appendInstrArg("Name", node.name)
+        this.appendInstrArg("Class", node.clazz)
+        this.appendInstrArg("Arguments", node.arguments)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: CallExpr.Static) {
-        this.appendInstrStart("Call/Virtual")
+        this.appendInstrStart("Call/Static")
         this.appendInstrArg("Name", node.name)
         this.appendInstrArg("Class", node.clazz)
         this.appendInstrArg("Arguments", node.arguments)

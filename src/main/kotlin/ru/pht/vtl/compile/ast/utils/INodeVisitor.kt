@@ -64,6 +64,7 @@ interface INodeVisitor {
         when (node) {
             is CallExpr.Internal    -> visit(node)
             is CallExpr.Virtual     -> visit(node)
+            is CallExpr.Super       -> visit(node)
             is CallExpr.Static      -> visit(node)
             else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
@@ -90,6 +91,7 @@ interface INodeVisitor {
     fun visit(node: ContextStmt)
     fun visit(node: CallExpr.Internal)
     fun visit(node: CallExpr.Virtual)
+    fun visit(node: CallExpr.Super)
     fun visit(node: CallExpr.Static)
     fun visit(node: FieldDefStmt)
     fun visit(node: FieldGetExpr.Instance)
