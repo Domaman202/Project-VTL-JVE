@@ -33,7 +33,7 @@ open class ClassLoadingContext {
     /**
      * Загрузчик классов.
      */
-    val loader: IContextClassLoader
+    val loader: ContextClassLoader
 
     /**
      * Загруженные классы.
@@ -51,7 +51,7 @@ open class ClassLoadingContext {
         this.parent = parent
         this.mixins = HashMap()
         this.appliedMixins = HashMap()
-        this.loader = ContextClassLoaderImpl(this, emptyArray(), null)
+        this.loader = ContextClassLoader(this, emptyArray(), null)
         this.loadedClasses = ArrayList()
     }
 
@@ -67,7 +67,7 @@ open class ClassLoadingContext {
         this.parent = parent
         this.mixins = HashMap()
         this.appliedMixins = HashMap()
-        this.loader = ContextClassLoaderImpl(this, emptyArray(), parentClassLoader)
+        this.loader = ContextClassLoader(this, emptyArray(), parentClassLoader)
         this.loadedClasses = ArrayList()
     }
 

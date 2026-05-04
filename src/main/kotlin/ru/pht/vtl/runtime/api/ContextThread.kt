@@ -1,6 +1,5 @@
 package ru.pht.vtl.runtime.api
 
-import ru.pht.vtl.runtime.api.IContextClassLoader.Companion.asClassLoader
 import ru.pht.vtl.runtime.exception.VTLRuntimeException
 
 /**
@@ -38,7 +37,7 @@ object ContextThread {
                 }
             }
         }
-        thread.contextClassLoader = classLoadingContext.loader.asClassLoader
+        thread.contextClassLoader = classLoadingContext.loader
         thread.name = name
         thread.isDaemon = isDaemon
         if (start) thread.start()

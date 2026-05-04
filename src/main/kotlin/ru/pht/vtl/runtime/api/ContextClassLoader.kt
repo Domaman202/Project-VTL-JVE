@@ -7,18 +7,31 @@ import java.net.URL
 import java.net.URLClassLoader
 
 /**
- * Реализация загрузчика классов VTL поверх [java.net.URLClassLoader].
+ * Загрузчик классов VTL.
  *
  * @param context Контекст загрузки.
  * @param urls URL для загрузки классов.
  * @param parent Родительский загрузчик классов.
  */
-open class ContextClassLoaderImpl(
+open class ContextClassLoader(
     val context: ClassLoadingContext,
     urls: Array<URL>,
     parent: ClassLoader?
-) : URLClassLoader(urls, parent), IContextClassLoader {
-    override fun defineClass(name: String, parents: List<String>, isInterface: Boolean, isOpen: Boolean, body: List<StatementClass>, context: SecureContext): Class<*> {
+) : URLClassLoader(urls, parent) {
+    /**
+     * Определение VTL класса с проверками.
+     * Используется в [ClassLoadingContext].
+     *
+     * @param name Сырое имя.
+     * @param parents Список родителей.
+     * @param isInterface Это интерфейс?
+     * @param isOpen Можно наследовать?
+     * @param body Тело.
+     * @param context Контекст безопасности класса.
+     * @return Java класс.
+     * @throws ClassDefinitionException
+     */
+    fun defineClass(name: String, parents: List<String>, isInterface: Boolean, isOpen: Boolean, body: List<StatementClass>, context: SecureContext): Class<*> {
         synchronized(this.getClassLoadingLock(name)) {
             // Проверка на защищённый класс
             val isProtected = name.startsWith('@')
@@ -78,7 +91,21 @@ open class ContextClassLoaderImpl(
         }
     }
 
-    override fun defineClass0(name: String, parents: List<String>, isProtected: Boolean, isInterface: Boolean, isOpen: Boolean, body: List<StatementClass>, context: SecureContext, mixins: List<Pair<SecureContext, StatementMixin>>?): Class<*> {
+    /**
+     * Определение VTL класса без проверок.
+     *
+     * @param name Сырое имя.
+     * @param parents Список родителей.
+     * @param isProtected Это защищённый класс?
+     * @param isInterface Это интерфейс?
+     * @param isOpen Можно наследовать?
+     * @param body Тело.
+     * @param context Контекст безопасности класса.
+     * @param mixins Примеси.
+     * @return Java класс.
+     * @throws ClassDefinitionException
+     */
+    private fun defineClass0(name: String, parents: List<String>, isProtected: Boolean, isInterface: Boolean, isOpen: Boolean, body: List<StatementClass>, context: SecureContext, mixins: List<Pair<SecureContext, StatementMixin>>?): Class<*> {
         TODO("Not yet implemented")
     }
 
