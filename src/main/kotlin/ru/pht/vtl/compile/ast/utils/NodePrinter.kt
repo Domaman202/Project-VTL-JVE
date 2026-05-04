@@ -7,6 +7,13 @@ class NodePrinter private constructor() : INodeVisitor {
     private val sb = StringBuilder()
     private var indent = 0
 
+    override fun visit(node: BlockExpr) {
+        this.appendInstrStart("Block")
+        this.appendInstrArg("Body|Stmt", node.firstStmt)
+        this.appendInstrArg("Body|Expr", node.lastExpr)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: BlockStmt) {
         this.appendInstrStart("Block")
         this.appendInstrArg("Body", node.body)

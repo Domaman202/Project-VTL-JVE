@@ -11,11 +11,6 @@ import ru.pht.vtl.runtime.api.ContextClassLoaderImpl.ClassDefinitionException
  */
 interface IContextClassLoader {
     /**
-     * Получить объект как [java.lang.ClassLoader].
-     */
-    val asClassLoader: ClassLoader get() = this as ClassLoader
-
-    /**
      * Определение VTL класса с проверками.
      * Используется в [ClassLoadingContext].
      *
@@ -46,9 +41,16 @@ interface IContextClassLoader {
      * @throws ClassDefinitionException
      */
     fun defineClass0(name: String, parents: List<String>, isProtected: Boolean, isInterface: Boolean, isOpen: Boolean, body: List<StatementClass>, context: SecureContext, mixins: List<Pair<SecureContext, StatementMixin>>?): Class<*>
-}
 
-/**
- * Попытка получить объект как [IContextClassLoader].
- */
-val ClassLoader.tryAsContextClassLoader get() = if (this is IContextClassLoader) this as IContextClassLoader else null
+    companion object {
+        /**
+         * Получить объект как [java.lang.ClassLoader].
+         */
+        val IContextClassLoader.asClassLoader: ClassLoader get() = this as ClassLoader
+
+        /**
+         * Попытка получить объект как [IContextClassLoader].
+         */
+        val ClassLoader.tryAsContextClassLoader get() = if (this is IContextClassLoader) this as IContextClassLoader else null
+    }
+}

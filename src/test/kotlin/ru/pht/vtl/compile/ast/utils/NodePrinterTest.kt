@@ -17,6 +17,93 @@ class NodePrinterTest {
     }
 
     @Test
+    fun testBlockExpr() {
+        assertEquals(
+            """
+                [Block
+                |	(Body|Stmt):
+                |	-
+                |	(Body|Expr):
+                |	|	[Value
+                |	|	|	(Type): STRING
+                |	|	|	(Value): Возвращаемое значение!
+                |	|	]
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                BlockExpr(
+                    listOf(),
+                    ValueExpr(
+                        ValueExpr.Type.STRING,
+                        "Возвращаемое значение!"
+                    )
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Block
+                |	(Body|Stmt):
+                |	|	[Call/Internal
+                |	|	|	(Name): vtl/core/println
+                |	|	|	(Arguments):
+                |	|	|	|	[Value
+                |	|	|	|	|	(Type): STRING
+                |	|	|	|	|	(Value): Первый!
+                |	|	|	|	]
+                |	|	|	-
+                |	|	]
+                |	|	[Call/Internal
+                |	|	|	(Name): vtl/core/println
+                |	|	|	(Arguments):
+                |	|	|	|	[Value
+                |	|	|	|	|	(Type): STRING
+                |	|	|	|	|	(Value): Второй!
+                |	|	|	|	]
+                |	|	|	-
+                |	|	]
+                |	-
+                |	(Body|Expr):
+                |	|	[Value
+                |	|	|	(Type): STRING
+                |	|	|	(Value): Третий!
+                |	|	]
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                BlockExpr(
+                    listOf(
+                        CallExpr.Internal(
+                            "vtl/core/println",
+                            listOf(
+                                ValueExpr(
+                                    ValueExpr.Type.STRING,
+                                    "Первый!"
+                                )
+                            )
+                        ),
+                        CallExpr.Internal(
+                            "vtl/core/println",
+                            listOf(
+                                ValueExpr(
+                                    ValueExpr.Type.STRING,
+                                    "Второй!"
+                                )
+                            )
+                        )
+                    ),
+                    ValueExpr(
+                        ValueExpr.Type.STRING,
+                        "Третий!"
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun testBlockStmt() {
         assertEquals(
             """

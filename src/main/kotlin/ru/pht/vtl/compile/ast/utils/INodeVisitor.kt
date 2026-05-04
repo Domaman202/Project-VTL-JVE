@@ -15,6 +15,7 @@ interface INodeVisitor {
 
     fun visit(node: Expression) {
         when (node) {
+            is BlockExpr        -> visit(node)
             is CallExpr         -> visit(node)
             is FieldGetExpr     -> visit(node)
             is IfExpr           -> visit(node)
@@ -89,6 +90,7 @@ interface INodeVisitor {
         }
     }
 
+    fun visit(node: BlockExpr)
     fun visit(node: BlockStmt)
     fun visit(node: ClassStmt)
     fun visit(node: ContextStmt)

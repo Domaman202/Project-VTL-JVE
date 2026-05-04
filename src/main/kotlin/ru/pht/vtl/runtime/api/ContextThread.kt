@@ -1,7 +1,7 @@
 package ru.pht.vtl.runtime.api
 
+import ru.pht.vtl.runtime.api.IContextClassLoader.Companion.asClassLoader
 import ru.pht.vtl.runtime.exception.VTLRuntimeException
-
 
 /**
  * Утилиты для работы с потоками с привязкой к контекстам.
