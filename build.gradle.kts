@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "ru.pht.vtl"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -19,6 +19,10 @@ dependencies {
     implementation("io.github.z4kn4fein:semver:${project.properties["semver_version"]}")
     // Тест
     testImplementation(kotlin("test"))
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 tasks.test {
