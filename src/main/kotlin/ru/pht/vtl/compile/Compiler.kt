@@ -74,10 +74,16 @@ class Compiler {
     }
 
     private fun compileVirtualClass(cnode: ClassNode, anode: AnnotationNode) {
+        val name = anode.valueNameOrJVM(cnode)
+        val parents = anode.valueParentsOr(cnode)
+        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
         TODO()
     }
 
     private fun compileVirtualInterface(cnode: ClassNode, anode: AnnotationNode) {
+        val name = anode.valueNameOrJVM(cnode)
+        val parents = anode.valueParentsOr(cnode)
+        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
         TODO()
     }
 
