@@ -1,14 +1,14 @@
 package ru.pht.vtl.compile.api.annotation
 
-import ru.pht.vtl.compile.api.annotation.utils.Parents
 import ru.pht.vtl.compile.api.annotation.utils.RefContext
+import ru.pht.vtl.compile.api.annotation.utils.Parents
 
 /**
- * Создание интерфейса VTL.
+ * Описание внешнего функционального интерфейса VTL.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class Interface(
+annotation class VirtualFunInterface(
     /**
      * Имя интерфейса VTL.
      *

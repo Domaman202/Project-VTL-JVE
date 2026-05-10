@@ -1,6 +1,6 @@
 package ru.pht.vtl.compile.ast
 
-class InterfaceStmt(
+open class InterfaceStmt(
     val name: String,
     val parents: List<String>,
     val context: String,

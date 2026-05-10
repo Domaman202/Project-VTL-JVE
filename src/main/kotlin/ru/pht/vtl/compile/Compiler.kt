@@ -25,12 +25,10 @@ class Compiler {
      * @throws InvalidAnnotationException Ошибка анализа аннотаций описания представления VTL.
      */
     private fun compile(sources: List<ByteArray>): BlockStmt {
-        val pre = sources.map { this.precompile(it) }
-        val compiled = pre.mapNotNull { this.compile(it.first, it.second) }
-        return BlockStmt(compiled)
+        TODO()
     }
 
-    private fun precompile(bytes: ByteArray): Pair<ClassNode, AnnotationNode> {
+    private fun compile(bytes: ByteArray): Pair<ClassNode, AnnotationNode> {
         val node = ClassNode()
         ClassReader(bytes).accept(node, 0)
         val annotations = node.invisibleAnnotations.filter { it.desc.startsWith("L$ANNOTATIONS_PACKAGE") }
@@ -39,13 +37,15 @@ class Compiler {
             1 -> {
                 val annotation = annotations.first()
                 when (annotation.desc) {
-                    ANN_CLASS_DESC              -> precompileClass(node, annotation)
-                    ANN_CONTEXT_DESC            -> precompileContext(node, annotation)
-                    ANN_INTERFACE_DESC          -> precompileInterface(node, annotation)
-                    ANN_MIXIN_DESC              -> precompileMixin(node, annotation)
-                    ANN_VIRTUAL_CLASS_DESC      -> precompileVirtualClass(node, annotation)
-                    ANN_VIRTUAL_CONTEXT_DESC    -> precompileVirtualContext(node, annotation)
-                    ANN_VIRTUAL_INTERFACE_DESC  -> precompileVirtualInterface(node, annotation)
+                    ANN_CLASS_DESC                  -> compileClass(node, annotation)
+                    ANN_CONTEXT_DESC                -> compileContext(node, annotation)
+                    ANN_INTERFACE_DESC              -> compileFunInterface(node, annotation)
+                    ANN_FUN_INTERFACE_DESC          -> compileInterface(node, annotation)
+                    ANN_MIXIN_DESC                  -> compileMixin(node, annotation)
+                    ANN_VIRTUAL_CLASS_DESC          -> compileVirtualClass(node, annotation)
+                    ANN_VIRTUAL_CONTEXT_DESC        -> compileVirtualContext(node, annotation)
+                    ANN_VIRTUAL_FUN_INTERFACE_DESC  -> compileVirtualFunInterface(node, annotation)
+                    ANN_VIRTUAL_INTERFACE_DESC      -> compileVirtualInterface(node, annotation)
                     else -> throw InvalidAnnotationException("Класс \"${node.name}\" содержит неопознанную аннотацию \"${annotation.desc}\"")
                 }
                 return Pair(node, annotation)
@@ -54,28 +54,25 @@ class Compiler {
         }
     }
 
-    private fun compile(node: ClassNode, annotation: AnnotationNode): Statement? {
-        return when (annotation.desc) {
-            ANN_CLASS_DESC      -> compileClass(node, annotation)
-            ANN_CONTEXT_DESC    -> compileContext(node, annotation)
-            ANN_INTERFACE_DESC  -> compileInterface(node, annotation)
-            ANN_MIXIN_DESC      -> compileMixin(node, annotation)
-            else -> null
-        }
-    }
-
     private fun compileClass(cnode: ClassNode, anode: AnnotationNode): ClassStmt {
-        val name = anode.valueNameOrJVM(cnode)
-        val parents = anode.valueParentsOr(cnode)
-        val open = anode.valueOpenOrJVM(cnode)
-        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
+//        val name = anode.valueNameOrJVM(cnode)
+//        val parents = anode.valueParentsOr(cnode)
+//        val open = anode.valueOpenOrJVM(cnode)
+//        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
         TODO()
     }
 
     private fun compileInterface(cnode: ClassNode, anode: AnnotationNode): InterfaceStmt {
-        val name = anode.valueNameOrJVM(cnode)
-        val parents = anode.valueParentsOr(cnode)
-        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
+//        val name = anode.valueNameOrJVM(cnode)
+//        val parents = anode.valueParentsOr(cnode)
+//        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
+        TODO()
+    }
+
+    private fun compileFunInterface(cnode: ClassNode, anode: AnnotationNode): InterfaceStmt {
+//        val name = anode.valueNameOrJVM(cnode)
+//        val parents = anode.valueParentsOr(cnode)
+//        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
         TODO()
     }
 
@@ -87,39 +84,29 @@ class Compiler {
         TODO()
     }
 
-    private fun precompileClass(cnode: ClassNode, anode: AnnotationNode) {
+    private fun compileVirtualClass(cnode: ClassNode, anode: AnnotationNode) {
+//        val name = anode.valueNameOrJVM(cnode)
+//        this.mappingsJVMClassToVTLName[cnode.name] = name
         TODO()
     }
 
-    private fun precompileInterface(cnode: ClassNode, anode: AnnotationNode) {
+    private fun compileVirtualInterface(cnode: ClassNode, anode: AnnotationNode) {
+//        val name = anode.valueNameOrJVM(cnode)
+//        this.mappingsJVMClassToVTLName[cnode.name] = name
         TODO()
     }
 
-    private fun precompileContext(cnode: ClassNode, anode: AnnotationNode) {
+    private fun compileVirtualFunInterface(cnode: ClassNode, anode: AnnotationNode) {
+//        val name = anode.valueNameOrJVM(cnode)
+//        this.mappingsJVMClassToVTLName[cnode.name] = name
         TODO()
     }
 
-    private fun precompileMixin(cnode: ClassNode, anode: AnnotationNode) {
+    private fun compileRemap(cnode: ClassNode, anode: AnnotationNode) {
         TODO()
     }
 
-    private fun precompileVirtualClass(cnode: ClassNode, anode: AnnotationNode) {
-        val name = anode.valueNameOrJVM(cnode)
-        this.mappingsJVMClassToVTLName[cnode.name] = name
-        TODO()
-    }
-
-    private fun precompileVirtualInterface(cnode: ClassNode, anode: AnnotationNode) {
-        val name = anode.valueNameOrJVM(cnode)
-        this.mappingsJVMClassToVTLName[cnode.name] = name
-        TODO()
-    }
-
-    private fun precompileRemap(cnode: ClassNode, anode: AnnotationNode) {
-        TODO()
-    }
-
-    private fun precompileVirtualContext(cnode: ClassNode, anode: AnnotationNode) {
+    private fun compileVirtualContext(cnode: ClassNode, anode: AnnotationNode) {
         TODO()
     }
 
@@ -180,12 +167,14 @@ class Compiler {
         private const val ANN_CLASS_DESC = "Lru/pht/vtl/compile/api/annotation/Class;"
         private const val ANN_CONSTRUCTOR_DESC = "Lru/pht/vtl/compile/api/annotation/Constructor;"
         private const val ANN_CONTEXT_DESC = "Lru/pht/vtl/compile/api/annotation/Context;"
+        private const val ANN_FUN_INTERFACE_DESC = "Lru/pht/vtl/compile/api/annotation/FunInterface;"
         private const val ANN_INTERFACE_DESC = "Lru/pht/vtl/compile/api/annotation/Interface;"
         private const val ANN_METHOD_DESC = "Lru/pht/vtl/compile/api/annotation/Method;"
         private const val ANN_MIXIN_DESC = "Lru/pht/vtl/compile/api/annotation/Mixin;"
         private const val ANN_REMAP_DESC = "Lru/pht/vtl/compile/api/annotation/Remap;"
         private const val ANN_VIRTUAL_CLASS_DESC = "Lru/pht/vtl/compile/api/annotation/VirtualClass;"
         private const val ANN_VIRTUAL_CONTEXT_DESC = "Lru/pht/vtl/compile/api/annotation/VirtualContext;"
+        private const val ANN_VIRTUAL_FUN_INTERFACE_DESC = "Lru/pht/vtl/compile/api/annotation/VirtualFunInterface;"
         private const val ANN_VIRTUAL_INTERFACE_DESC = "Lru/pht/vtl/compile/api/annotation/VirtualInterface;"
 
         const val CTX_GLOBAL = "global"

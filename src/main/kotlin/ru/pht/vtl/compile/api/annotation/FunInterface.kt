@@ -4,11 +4,11 @@ import ru.pht.vtl.compile.api.annotation.utils.Parents
 import ru.pht.vtl.compile.api.annotation.utils.RefContext
 
 /**
- * Создание интерфейса VTL.
+ * Создание функционального интерфейса VTL.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class Interface(
+annotation class FunInterface(
     /**
      * Имя интерфейса VTL.
      *
