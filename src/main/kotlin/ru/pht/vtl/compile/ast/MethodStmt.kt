@@ -5,5 +5,7 @@ class MethodStmt(
     // (Имя, Тип)
     val arguments: List<Pair<String, String>>,
     val returnType: String,
+    val isOpen: Boolean,
+    val isAbstract: Boolean,
     val body: List<Statement>
 ) : StatementClass()

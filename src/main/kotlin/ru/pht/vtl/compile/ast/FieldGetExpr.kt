@@ -1,6 +1,6 @@
 package ru.pht.vtl.compile.ast
 
-open class FieldGetExpr(
+abstract class FieldGetExpr(
     val name: String
 ) : Expression() {
     class Instance(

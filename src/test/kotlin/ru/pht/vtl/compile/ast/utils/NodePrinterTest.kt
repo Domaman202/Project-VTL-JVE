@@ -359,6 +359,8 @@ class NodePrinterTest {
                 |	|	[Method
                 |	|	|	(Arguments): []
                 |	|	|	(ReturnType): vtl/core/Void
+                |	|	|	(Open): false
+                |	|	|	(Abstract): false
                 |	|	|	(Body):
                 |	|	|	|	[Return
                 |	|	|	|	|	(Value): (None)
@@ -379,6 +381,8 @@ class NodePrinterTest {
                             "foo",
                             listOf(),
                             "vtl/core/Void",
+                            isOpen = false,
+                            isAbstract = false,
                             listOf(
                                 ReturnStmt(
                                     null
@@ -772,6 +776,8 @@ class NodePrinterTest {
                 |	|	[Method
                 |	|	|	(Arguments): []
                 |	|	|	(ReturnType): vtl/core/Void
+                |	|	|	(Open): true
+                |	|	|	(Abstract): true
                 |	|	|	(Body):
                 |	|	|	-
                 |	|	]
@@ -788,9 +794,86 @@ class NodePrinterTest {
                             "foo",
                             listOf(),
                             "vtl/core/Void",
+                            isOpen = true,
+                            isAbstract = true,
                             listOf(),
                         ),
                     )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testLambdaExpr() {
+        assertEquals(
+            """
+                [Lambda
+                |	(Arguments): []
+                |	(ReturnType): vtl/core/Void
+                |	(Body):
+                |	|	[Call/Internal
+                |	|	|	(Name): vtl/core/println
+                |	|	|	(Arguments):
+                |	|	|	|	[Value
+                |	|	|	|	|	(Type): STRING
+                |	|	|	|	|	(Value): Foo!
+                |	|	|	|	]
+                |	|	|	-
+                |	|	]
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                LambdaExpr.Untyped(
+                    listOf(),
+                    "vtl/core/Void",
+                    listOf(
+                        CallExpr.Internal(
+                            "vtl/core/println",
+                            listOf(
+                                ValueExpr(
+                                    ValueExpr.Type.STRING,
+                                    "Foo!"
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        assertEquals(
+            """
+                [Lambda
+                |	(Type): ru/DmN/test/Consumer
+                |	(Body):
+                |	|	[Call/Internal
+                |	|	|	(Name): vtl/core/println
+                |	|	|	(Arguments):
+                |	|	|	|	[VarGet
+                |	|	|	|	|	(Name): value
+                |	|	|	|	]
+                |	|	|	-
+                |	|	]
+                |	-
+                ]
+            """.trimIndent(),
+            NodePrinter.print(
+                LambdaExpr.Typed(
+                    "ru/DmN/test/Consumer",
+                    listOf(
+                        "value"
+                    ),
+                    listOf(
+                        CallExpr.Internal(
+                            "vtl/core/println",
+                            listOf(
+                                VarGetExpr(
+                                    "value"
+                                )
+                            )
+                        )
+                    ),
                 )
             )
         )
@@ -829,6 +912,8 @@ class NodePrinterTest {
                 [Method
                 |	(Arguments): []
                 |	(ReturnType): vtl/core/Void
+                |	(Open): false
+                |	(Abstract): false
                 |	(Body):
                 |	|	[Return
                 |	|	|	(Value): (None)
@@ -841,6 +926,8 @@ class NodePrinterTest {
                     "foo",
                     listOf(),
                     "vtl/core/Void",
+                    isOpen = false,
+                    isAbstract = false,
                     listOf(
                         ReturnStmt(
                             null

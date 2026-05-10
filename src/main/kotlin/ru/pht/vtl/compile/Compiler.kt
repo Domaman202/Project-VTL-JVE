@@ -24,11 +24,11 @@ class Compiler {
      * @return VTL AST.
      * @throws InvalidAnnotationException Ошибка анализа аннотаций описания представления VTL.
      */
-    private fun compile(sources: List<ByteArray>): BlockStmt {
+    fun compile(sources: List<ByteArray>): BlockStmt {
         TODO()
     }
 
-    private fun compile(bytes: ByteArray): Pair<ClassNode, AnnotationNode> {
+    private fun compile(bytes: ByteArray): Node? {
         val node = ClassNode()
         ClassReader(bytes).accept(node, 0)
         val annotations = node.invisibleAnnotations.filter { it.desc.startsWith("L$ANNOTATIONS_PACKAGE") }
@@ -37,18 +37,18 @@ class Compiler {
             1 -> {
                 val annotation = annotations.first()
                 when (annotation.desc) {
-                    ANN_CLASS_DESC                  -> compileClass(node, annotation)
-                    ANN_CONTEXT_DESC                -> compileContext(node, annotation)
-                    ANN_INTERFACE_DESC              -> compileFunInterface(node, annotation)
-                    ANN_FUN_INTERFACE_DESC          -> compileInterface(node, annotation)
-                    ANN_MIXIN_DESC                  -> compileMixin(node, annotation)
+                    ANN_CLASS_DESC                  -> return compileClass(node, annotation)
+                    ANN_CONTEXT_DESC                -> return compileContext(node, annotation)
+                    ANN_INTERFACE_DESC              -> return compileFunInterface(node, annotation)
+                    ANN_FUN_INTERFACE_DESC          -> return compileInterface(node, annotation)
+                    ANN_MIXIN_DESC                  -> return compileMixin(node, annotation)
                     ANN_VIRTUAL_CLASS_DESC          -> compileVirtualClass(node, annotation)
                     ANN_VIRTUAL_CONTEXT_DESC        -> compileVirtualContext(node, annotation)
                     ANN_VIRTUAL_FUN_INTERFACE_DESC  -> compileVirtualFunInterface(node, annotation)
                     ANN_VIRTUAL_INTERFACE_DESC      -> compileVirtualInterface(node, annotation)
                     else -> throw InvalidAnnotationException("Класс \"${node.name}\" содержит неопознанную аннотацию \"${annotation.desc}\"")
                 }
-                return Pair(node, annotation)
+                return null
             }
             else -> throw InvalidAnnotationException("Класс \"${node.name}\" содержит более одной аннотации описания представления в VTL.")
         }

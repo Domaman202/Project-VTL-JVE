@@ -1,6 +1,6 @@
 package ru.pht.vtl.compile.ast
 
-open class FieldSetStmt(
+abstract class FieldSetStmt(
     val name: String,
     val value: Expression
 ) : Statement() {

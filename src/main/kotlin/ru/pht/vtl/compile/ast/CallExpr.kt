@@ -1,6 +1,6 @@
 package ru.pht.vtl.compile.ast
 
-open class CallExpr(
+abstract class CallExpr(
     val name: String,
     val arguments: List<Expression>
 ) : Expression() {

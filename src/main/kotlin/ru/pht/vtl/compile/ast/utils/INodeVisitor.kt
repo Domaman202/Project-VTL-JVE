@@ -15,13 +15,15 @@ interface INodeVisitor {
 
     fun visit(node: Expression) {
         when (node) {
-            is BlockExpr        -> visit(node)
-            is CallExpr         -> visit(node)
-            is FieldGetExpr     -> visit(node)
-            is IfExpr           -> visit(node)
-            is MathExpr         -> visit(node)
-            is ValueExpr        -> visit(node)
-            is VarGetExpr       -> visit(node)
+            is BlockExpr            -> visit(node)
+            is CallExpr             -> visit(node)
+            is FieldGetExpr         -> visit(node)
+            is IfExpr               -> visit(node)
+            is LambdaExpr.Untyped   -> visit(node)
+            is LambdaExpr.Typed     -> visit(node)
+            is MathExpr             -> visit(node)
+            is ValueExpr            -> visit(node)
+            is VarGetExpr           -> visit(node)
             else -> throw IllegalArgumentException("Неизвестный тип узла \"${node.javaClass}\"")
         }
     }
@@ -109,6 +111,8 @@ interface INodeVisitor {
     fun visit(node: IfExpr)
     fun visit(node: IfStmt)
     fun visit(node: InterfaceStmt)
+    fun visit(node: LambdaExpr.Untyped)
+    fun visit(node: LambdaExpr.Typed)
     fun visit(node: MathExpr)
     fun visit(node: MethodStmt)
     fun visit(node: MixinConstructorStmt)

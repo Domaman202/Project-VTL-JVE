@@ -165,6 +165,21 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrEnd()
     }
 
+    override fun visit(node: LambdaExpr.Untyped) {
+        this.appendInstrStart("Lambda")
+        this.appendInstrArg("Arguments", node.arguments)
+        this.appendInstrArg("ReturnType", node.returnType)
+        this.appendInstrArg("Body", node.body)
+        this.appendInstrEnd()
+    }
+
+    override fun visit(node: LambdaExpr.Typed) {
+        this.appendInstrStart("Lambda")
+        this.appendInstrArg("Type", node.type)
+        this.appendInstrArg("Body", node.body)
+        this.appendInstrEnd()
+    }
+
     override fun visit(node: MathExpr) {
         this.appendInstrStart("Math")
         this.appendInstrArg("Operation", node.operation)
@@ -177,6 +192,8 @@ class NodePrinter private constructor() : INodeVisitor {
         this.appendInstrStart("Method")
         this.appendInstrArg("Arguments", node.arguments)
         this.appendInstrArg("ReturnType", node.returnType)
+        this.appendInstrArg("Open", node.isOpen)
+        this.appendInstrArg("Abstract", node.isAbstract)
         this.appendInstrArg("Body", node.body)
         this.appendInstrEnd()
     }

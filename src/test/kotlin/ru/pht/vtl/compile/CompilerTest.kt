@@ -13,7 +13,7 @@ class CompilerTest {
     @Test
     fun simpleTest() {
         val bytes = CompilerTest::class.java.classLoader.getResourceAsStream($$"ru/pht/vtl/compile/CompilerTest$SimpleTest.class")?.readAllBytes() ?: error("Class file not found")
-        val node = Compiler().compile(bytes) ?: error("Node is null")
+        val node = Compiler().compile(listOf(bytes))
         val nodePrint = NodePrinter.print(node)
         assertEquals(
             """
