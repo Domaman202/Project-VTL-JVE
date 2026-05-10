@@ -105,15 +105,13 @@ class Compiler {
 
     private fun precompileVirtualClass(cnode: ClassNode, anode: AnnotationNode) {
         val name = anode.valueNameOrJVM(cnode)
-        val parents = anode.valueParentsOr(cnode)
-        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
+        this.mappingsJVMClassToVTLName[cnode.name] = name
         TODO()
     }
 
     private fun precompileVirtualInterface(cnode: ClassNode, anode: AnnotationNode) {
         val name = anode.valueNameOrJVM(cnode)
-        val parents = anode.valueParentsOr(cnode)
-        val context = anode.valueContextOrNull() ?: CTX_GLOBAL
+        this.mappingsJVMClassToVTLName[cnode.name] = name
         TODO()
     }
 
