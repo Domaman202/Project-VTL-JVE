@@ -7,11 +7,7 @@ import org.objectweb.asm.tree.AnnotationNode
 import org.objectweb.asm.tree.ClassNode
 import ru.pht.vtl.compile.api.annotation.utils.OpenModifier
 import ru.pht.vtl.compile.api.annotation.utils.Parents
-import ru.pht.vtl.compile.ast.ClassStmt
-import ru.pht.vtl.compile.ast.ContextStmt
-import ru.pht.vtl.compile.ast.InterfaceStmt
-import ru.pht.vtl.compile.ast.MixinStmt
-import ru.pht.vtl.compile.ast.Node
+import ru.pht.vtl.compile.ast.*
 import ru.pht.vtl.compile.exception.VTLCompileException
 
 /**
@@ -19,14 +15,22 @@ import ru.pht.vtl.compile.exception.VTLCompileException
  */
 @Suppress("UNCHECKED_CAST")
 class Compiler {
+    private val mappingsJVMClassToVTLName: MutableMap<String, String> = HashMap()
+
     /**
-     * Компиляция Java класса в VTL.
+     * Компиляция Java классов в VTL.
      *
-     * @param bytes Байткод класса.
+     * @param sources Байткод классов.
      * @return VTL AST.
      * @throws InvalidAnnotationException Ошибка анализа аннотаций описания представления VTL.
      */
-    fun compile(bytes: ByteArray): Node? {
+    private fun compile(sources: List<ByteArray>): BlockStmt {
+        val pre = sources.map { this.precompile(it) }
+        val compiled = pre.mapNotNull { this.compile(it.first, it.second) }
+        return BlockStmt(compiled)
+    }
+
+    private fun precompile(bytes: ByteArray): Pair<ClassNode, AnnotationNode> {
         val node = ClassNode()
         ClassReader(bytes).accept(node, 0)
         val annotations = node.invisibleAnnotations.filter { it.desc.startsWith("L$ANNOTATIONS_PACKAGE") }
@@ -35,18 +39,28 @@ class Compiler {
             1 -> {
                 val annotation = annotations.first()
                 when (annotation.desc) {
-                    ANN_CLASS_DESC              -> return compileClass(node, annotation)
-                    ANN_CONTEXT_DESC            -> return compileContext(node, annotation)
-                    ANN_INTERFACE_DESC          -> return compileInterface(node, annotation)
-                    ANN_MIXIN_DESC              -> return compileMixin(node, annotation)
-                    ANN_VIRTUAL_CLASS_DESC      -> compileVirtualClass(node, annotation)
-                    ANN_VIRTUAL_CONTEXT_DESC    -> compileVirtualContext(node, annotation)
-                    ANN_VIRTUAL_INTERFACE_DESC  -> compileVirtualInterface(node, annotation)
+                    ANN_CLASS_DESC              -> precompileClass(node, annotation)
+                    ANN_CONTEXT_DESC            -> precompileContext(node, annotation)
+                    ANN_INTERFACE_DESC          -> precompileInterface(node, annotation)
+                    ANN_MIXIN_DESC              -> precompileMixin(node, annotation)
+                    ANN_VIRTUAL_CLASS_DESC      -> precompileVirtualClass(node, annotation)
+                    ANN_VIRTUAL_CONTEXT_DESC    -> precompileVirtualContext(node, annotation)
+                    ANN_VIRTUAL_INTERFACE_DESC  -> precompileVirtualInterface(node, annotation)
                     else -> throw InvalidAnnotationException("Класс \"${node.name}\" содержит неопознанную аннотацию \"${annotation.desc}\"")
                 }
-                return null
+                return Pair(node, annotation)
             }
             else -> throw InvalidAnnotationException("Класс \"${node.name}\" содержит более одной аннотации описания представления в VTL.")
+        }
+    }
+
+    private fun compile(node: ClassNode, annotation: AnnotationNode): Statement? {
+        return when (annotation.desc) {
+            ANN_CLASS_DESC      -> compileClass(node, annotation)
+            ANN_CONTEXT_DESC    -> compileContext(node, annotation)
+            ANN_INTERFACE_DESC  -> compileInterface(node, annotation)
+            ANN_MIXIN_DESC      -> compileMixin(node, annotation)
+            else -> null
         }
     }
 
@@ -73,25 +87,41 @@ class Compiler {
         TODO()
     }
 
-    private fun compileVirtualClass(cnode: ClassNode, anode: AnnotationNode) {
+    private fun precompileClass(cnode: ClassNode, anode: AnnotationNode) {
+        TODO()
+    }
+
+    private fun precompileInterface(cnode: ClassNode, anode: AnnotationNode) {
+        TODO()
+    }
+
+    private fun precompileContext(cnode: ClassNode, anode: AnnotationNode) {
+        TODO()
+    }
+
+    private fun precompileMixin(cnode: ClassNode, anode: AnnotationNode) {
+        TODO()
+    }
+
+    private fun precompileVirtualClass(cnode: ClassNode, anode: AnnotationNode) {
         val name = anode.valueNameOrJVM(cnode)
         val parents = anode.valueParentsOr(cnode)
         val context = anode.valueContextOrNull() ?: CTX_GLOBAL
         TODO()
     }
 
-    private fun compileVirtualInterface(cnode: ClassNode, anode: AnnotationNode) {
+    private fun precompileVirtualInterface(cnode: ClassNode, anode: AnnotationNode) {
         val name = anode.valueNameOrJVM(cnode)
         val parents = anode.valueParentsOr(cnode)
         val context = anode.valueContextOrNull() ?: CTX_GLOBAL
         TODO()
     }
 
-    private fun compileRemap(cnode: ClassNode, anode: AnnotationNode) {
+    private fun precompileRemap(cnode: ClassNode, anode: AnnotationNode) {
         TODO()
     }
 
-    private fun compileVirtualContext(cnode: ClassNode, anode: AnnotationNode) {
+    private fun precompileVirtualContext(cnode: ClassNode, anode: AnnotationNode) {
         TODO()
     }
 
@@ -106,7 +136,7 @@ class Compiler {
 
     private fun AnnotationNode.valueAsClass(): String {
         this.valueOrNull<String>("name")?.let { return it }
-        this.valueOrNull<Type>("clazz")?.let { return it.internalName }
+        this.valueOrNull<Type>("clazz")?.let { return mapJVMClassToVTLName(it.internalName) }
         throw IllegalStateException()
     }
 
@@ -138,8 +168,13 @@ class Compiler {
     private fun AnnotationNode.valueContextOrNull(): String? {
         val inner = this.valueOrNull<AnnotationNode>("context") ?: return null
         inner.valueOrNull<String>("name")?.let { return it }
-        inner.valueOrNull<Type>("clazz")?.let { return it.internalName }
+        inner.valueOrNull<Type>("clazz")?.let { return mapJVMClassToVTLName(it.internalName) }
         return null
+    }
+
+    private fun mapJVMClassToVTLName(clazz: String): String {
+        return mappingsJVMClassToVTLName[clazz]
+            ?: throw NoSuchElementException("Класс \"$clazz\" не содержит VTL аналога")
     }
 
     companion object {
